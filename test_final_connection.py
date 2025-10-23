@@ -26,28 +26,24 @@ def test_final_connection():
     print(f"📊 Contraseña: {'*' * len(password)}")
     
     try:
-        import pymssql
+        from sqlalchemy import create_engine
         
         print(f"\n🔌 Conectando a SQL Server...")
-        conn = pymssql.connect(
-            server=server,
-            port=port,
-            user=username,
-            password=password,
-            database=database,
-            timeout=10
-        )
+        # Usar la misma configuración que tu script funcionando
+        conn_str = f"mssql+pyodbc://{username}:{password}@{server},{port}/{database}?driver=SQL+Server"
+        engine = create_engine(conn_str)
+        conn = engine.connect()
         
-        cursor = conn.cursor()
-        cursor.execute("SELECT @@VERSION")
-        version = cursor.fetchone()[0]
+        # Probar consulta de versión
+        result = conn.execute("SELECT @@VERSION")
+        version = result.fetchone()[0]
         
         print(f"✅ ¡Conexión exitosa!")
         print(f"📊 Versión: {version.split(chr(10))[0]}")
         
         # Probar consulta a la base de datos
-        cursor.execute("SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME LIKE 'app_%'")
-        table_count = cursor.fetchone()[0]
+        result = conn.execute("SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME LIKE 'app_%'")
+        table_count = result.fetchone()[0]
         print(f"📊 Tablas con prefijo 'app_': {table_count}")
         
         conn.close()
