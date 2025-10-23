@@ -7,21 +7,8 @@ basedir = Path(__file__).parent.parent
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-secret-key-change-in-production'
     
-    # Configuración para SQL Server
-    SQL_SERVER_CONFIG = {
-        'server': '181.198.42.195',
-        'port': '5010',
-        'database': 'Rend_Cultivo',
-        'username': 'sa',
-        'password': '6509',
-        'driver': 'ODBC Driver 17 for SQL Server'
-    }
-    
-    # URL de conexión - SQLite para desarrollo local, SQL Server para producción
+    # URL de conexión para SQLite (desarrollo local)
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or f'sqlite:///{basedir}/instance/agricultura.db'
-    
-    # Fallback a SQLite para desarrollo local
-    SQLALCHEMY_DATABASE_URI_LOCAL = f'sqlite:///{basedir}/instance/agricultura.db'
     
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
