@@ -9,11 +9,11 @@ class Config:
     
     # Configuración para SQL Server
     SQL_SERVER_CONFIG = {
-        'server': '181.198.42.194',  # IP pública del servidor SQL Server
+        'server': '181.198.42.195',  # IP pública del servidor SQL Server (misma que Flutter)
         'port': '5010',              # Puerto personalizado (mismo que Flutter)
         'database': 'Rend_Cultivo',
         'username': 'sa',
-        'password': r'$DataWareHouse$',
+        'password': '6509',          # Contraseña correcta (misma que Flutter)
         'driver': 'ODBC Driver 17 for SQL Server'
     }
     
