@@ -9,8 +9,8 @@ class Config:
     
     # Configuración para SQL Server
     SQL_SERVER_CONFIG = {
-        'server': '181.198.42.195',
-        'port': '5010',
+        'server': 'localhost',  # Cambiar a localhost si es el mismo servidor
+        'port': '1433',        # Puerto estándar de SQL Server
         'database': 'Rend_Cultivo',
         'username': 'sa',
         'password': '6509',
