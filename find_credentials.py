@@ -164,7 +164,8 @@ def test_flask_connection():
         
         with app.app_context():
             # Probar la conexión
-            db.engine.execute("SELECT 1")
+            with db.engine.connect() as connection:
+                connection.execute(db.text("SELECT 1"))
             print("✅ ¡Conexión Flask/SQLAlchemy exitosa!")
             return True
             
