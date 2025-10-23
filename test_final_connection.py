@@ -43,7 +43,7 @@ def test_final_connection():
         version = cursor.fetchone()[0]
         
         print(f"✅ ¡Conexión exitosa!")
-        print(f"📊 Versión: {version.split('\\n')[0]}")
+        print(f"📊 Versión: {version.split(chr(10))[0]}")
         
         # Probar consulta a la base de datos
         cursor.execute("SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME LIKE 'app_%'")
