@@ -9,8 +9,8 @@ class Config:
     
     # Configuración para SQL Server
     SQL_SERVER_CONFIG = {
-        'server': 'localhost',  # localhost si es el mismo servidor
-        'port': '1433',             # Puerto estándar de SQL Server
+        'server': '181.198.42.194',  # IP pública del servidor SQL Server
+        'port': '5010',              # Puerto personalizado (mismo que Flutter)
         'database': 'Rend_Cultivo',
         'username': 'sa',
         'password': '6509',
