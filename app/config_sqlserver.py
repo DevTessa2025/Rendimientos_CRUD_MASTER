@@ -17,10 +17,11 @@ class Config:
         'driver': 'ODBC Driver 17 for SQL Server'
     }
     
-    # URL de conexión para SQL Server usando pymssql
+    # URL de conexión para SQL Server usando pyodbc (mismo que tu script)
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or (
-        f"mssql+pymssql://{SQL_SERVER_CONFIG['username']}:{SQL_SERVER_CONFIG['password']}"
-        f"@{SQL_SERVER_CONFIG['server']}:{SQL_SERVER_CONFIG['port']}/{SQL_SERVER_CONFIG['database']}"
+        f"mssql+pyodbc://{SQL_SERVER_CONFIG['username']}:{SQL_SERVER_CONFIG['password']}"
+        f"@{SQL_SERVER_CONFIG['server']},{SQL_SERVER_CONFIG['port']}/{SQL_SERVER_CONFIG['database']}"
+        f"?driver=SQL+Server"
     )
     
     SQLALCHEMY_TRACK_MODIFICATIONS = False
