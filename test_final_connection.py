@@ -34,15 +34,17 @@ def test_final_connection():
         engine = create_engine(conn_str)
         conn = engine.connect()
         
+        from sqlalchemy import text
+        
         # Probar consulta de versión
-        result = conn.execute("SELECT @@VERSION")
+        result = conn.execute(text("SELECT @@VERSION"))
         version = result.fetchone()[0]
         
         print(f"✅ ¡Conexión exitosa!")
         print(f"📊 Versión: {version.split(chr(10))[0]}")
         
         # Probar consulta a la base de datos
-        result = conn.execute("SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME LIKE 'app_%'")
+        result = conn.execute(text("SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME LIKE 'app_%'"))
         table_count = result.fetchone()[0]
         print(f"📊 Tablas con prefijo 'app_': {table_count}")
         
