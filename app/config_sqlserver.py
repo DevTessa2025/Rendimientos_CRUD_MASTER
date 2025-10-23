@@ -13,7 +13,7 @@ class Config:
         'port': '5010',              # Puerto personalizado (mismo que Flutter)
         'database': 'Rend_Cultivo',
         'username': 'sa',
-        'password': '6509',
+        'password': r'$DataWareHouse$',
         'driver': 'ODBC Driver 17 for SQL Server'
     }
     
