@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% block title %}Gestionar Asignaciones de Áreas{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-map-marked-alt"></i> Gestionar Asignaciones de Áreas</h2>
+        <div>
+            <a href="{{ url_for('supervisores.asignar_supervisor_area') }}" class="btn btn-primary me-2">
+                <i class="fas fa-user-tie"></i> Asignar Supervisor
+            </a>
+            <a href="{{ url_for('codigos.asignar_codigo_area') }}" class="btn btn-success me-2">
+                <i class="fas fa-code"></i> Asignar Código
+            </a>
+            <a href="{{ url_for('areas.listar_areas') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+        </div>
+    </div>
+
+    <!-- Áreas con sus asignaciones -->
+    <div class="row">
+        {% for info in areas_info %}
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-{% if info.supervisor %}success{% else %}warning{% endif %} text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-map-marker-alt"></i> {{ info.area.nombre }}
+                        </h5>
+                        <span class="badge bg-light text-dark">
+                            {{ info.total_codigos }} códigos
+                        </span>
+                    </div>
+                    <small>{{ info.area.finca.nombre }}</small>
+                </div>
+                
+                <div class="card-body">
+                    <!-- Supervisor Asignado -->
+                    <div class="mb-3">
+                        <h6 class="text-muted">
+                            <i class="fas fa-user-tie"></i> Supervisor
+                        </h6>
+                        {% if info.supervisor %}
+                            <div class="d-flex align-items-center">
+                                <div class="flex-grow-1">
+                                    <strong>{{ info.supervisor.nombre }} {{ info.supervisor.apellido }}</strong>
+                                    <br>
+                                    <small class="text-muted">
+                                        <i class="fas fa-key"></i> {{ info.supervisor.clave_acceso }}
+                                    </small>
+                                </div>
+                                <div>
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-check"></i> Asignado
+                                    </span>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="text-center text-muted py-2">
+                                <i class="fas fa-user-slash fa-2x mb-2"></i>
+                                <p class="mb-0">Sin supervisor asignado</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Códigos Asignados -->
+                    <div class="mb-3">
+                        <h6 class="text-muted">
+                            <i class="fas fa-code"></i> Códigos Asignados
+                        </h6>
+                        {% if info.codigos %}
+                            <div class="row">
+                                {% for codigo in info.codigos[:6] %}
+                                <div class="col-6 mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <code class="me-2">{{ codigo.codigo }}</code>
+                                        <small class="text-muted">{{ codigo.nombre_persona }}</small>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                                {% if info.codigos|length > 6 %}
+                                <div class="col-12">
+                                    <small class="text-muted">
+                                        ... y {{ info.codigos|length - 6 }} más
+                                    </small>
+                                </div>
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            <div class="text-center text-muted py-2">
+                                <i class="fas fa-code fa-2x mb-2"></i>
+                                <p class="mb-0">Sin códigos asignados</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="card-footer">
+                    <div class="d-flex gap-2">
+                        <a href="{{ url_for('supervisores.asignar_supervisor_area') }}" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-user-tie"></i> Asignar Supervisor
+                        </a>
+                        <a href="{{ url_for('codigos.asignar_codigo_area') }}" class="btn btn-sm btn-outline-success">
+                            <i class="fas fa-code"></i> Asignar Código
+                        </a>
+                        <a href="{{ url_for('codigos.gestionar_asignaciones_codigos') }}" class="btn btn-sm btn-outline-info">
+                            <i class="fas fa-cogs"></i> Gestionar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Resumen -->
+    <div class="row mt-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center">
+                    <h3>{{ areas_info|length }}</h3>
+                    <p class="mb-0">Áreas Totales</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body text-center">
+                    <h3>{{ areas_info | selectattr('supervisor') | list | length }}</h3>
+                    <p class="mb-0">Con Supervisor</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body text-center">
+                    <h3>{{ areas_info | sum(attribute='total_codigos') }}</h3>
+                    <p class="mb-0">Códigos Totales</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body text-center">
+                    <h3>{{ areas_info | rejectattr('supervisor') | list | length }}</h3>
+                    <p class="mb-0">Sin Supervisor</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

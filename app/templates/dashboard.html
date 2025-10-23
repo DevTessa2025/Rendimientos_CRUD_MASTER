@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Sistema Agrícola{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1><i class="fas fa-tachometer-alt"></i> Dashboard</h1>
+        <p class="lead">Bienvenido al Sistema de Gestión Agrícola</p>
+    </div>
+</div>
+
+<div class="row mt-4">
+    {% if session.rol == 'admin' %}
+    <div class="col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="card-title">Fincas</h4>
+                        <p class="card-text">Gestionar fincas</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-building fa-2x"></i>
+                    </div>
+                </div>
+                <a href="{{ url_for('fincas.listar_fincas') }}" class="btn btn-light">
+                    <i class="fas fa-arrow-right"></i> Ver Fincas
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <div class="col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="card-title">Áreas</h4>
+                        <p class="card-text">Gestionar áreas de cultivo</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-map fa-2x"></i>
+                    </div>
+                </div>
+                <a href="{{ url_for('areas.listar_areas') }}" class="btn btn-light">
+                    <i class="fas fa-arrow-right"></i> Ver Áreas
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="card-title">Supervisores</h4>
+                        <p class="card-text">Gestionar supervisores</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-user-tie fa-2x"></i>
+                    </div>
+                </div>
+                <a href="{{ url_for('supervisores.listar_supervisores') }}" class="btn btn-light">
+                    <i class="fas fa-arrow-right"></i> Ver Supervisores
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="card-title">Códigos</h4>
+                        <p class="card-text">Gestionar códigos de cosecha</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-users fa-2x"></i>
+                    </div>
+                </div>
+                <a href="{{ url_for('codigos.listar_codigos') }}" class="btn btn-light">
+                    <i class="fas fa-arrow-right"></i> Ver Códigos
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-info-circle"></i> Información del Sistema</h5>
+            </div>
+            <div class="card-body">
+                {% if session.rol == 'admin' %}
+                <p>Como <strong>Administrador</strong>, sigue este flujo de trabajo:</p>
+                <ol>
+                    <li><strong>Crear Fincas:</strong> Define las fincas del sistema</li>
+                    <li><strong>Crear Usuarios:</strong> Registra usuarios RRHH y Jefes de Cultivo</li>
+                    <li><strong>Asignar Usuarios:</strong> Asigna cada usuario a su finca correspondiente</li>
+                    <li><strong>Gestionar Todo:</strong> Puedes ver y administrar todo el sistema</li>
+                </ol>
+                <div class="alert alert-info">
+                    <i class="fas fa-lightbulb"></i>
+                    <strong>Tip:</strong> Los usuarios asignados solo verán datos de su finca específica.
+                </div>
+                {% else %}
+                <p>Como <strong>{{ session.rol|title }}</strong>, puedes gestionar para tu finca asignada:</p>
+                <ul>
+                    <li><strong>Áreas de Cultivo:</strong> Crear múltiples áreas (ej: 1,2,3,4,5,6)</li>
+                    <li><strong>Supervisores:</strong> Asignar supervisores con claves de acceso</li>
+                    <li><strong>Códigos:</strong> Crear códigos en rangos (ej: 001-010)</li>
+                </ul>
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle"></i>
+                    <strong>Nuevas funcionalidades:</strong> Puedes crear múltiples áreas y códigos en lotes para mayor eficiencia.
+                </div>
+                {% endif %}
+                <p class="text-muted">
+                    <strong>Usuario actual:</strong> {{ session.username }} ({{ session.rol }})
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

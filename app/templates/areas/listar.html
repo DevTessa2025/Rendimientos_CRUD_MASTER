@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Áreas - Sistema Agrícola{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-map"></i> Áreas de Cultivo</h1>
+    {% if session.rol in ['admin', 'rrhh', 'jefe_cultivo'] %}
+    <div>
+        <a href="{{ url_for('areas.gestionar_asignaciones_areas') }}" class="btn btn-info me-2">
+            <i class="fas fa-cogs"></i> Gestionar Asignaciones
+        </a>
+        <a href="{{ url_for('areas.crear_area') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Nueva Área
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<div class="card">
+    <div class="card-body">
+        {% if areas %}
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Finca</th>
+                        <th>Supervisor</th>
+                        <th>Estado</th>
+                        <th>Fecha Creación</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for area in areas %}
+                    <tr>
+                        <td>{{ area.id }}</td>
+                        <td>{{ area.nombre }}</td>
+                        <td>{{ area.finca.nombre }}</td>
+                        <td>
+                            {% if area.supervisor %}
+                                {{ area.supervisor.nombre }} {{ area.supervisor.apellido }}
+                            {% else %}
+                                <span class="text-muted">Sin asignar</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if area.activa %}
+                                <span class="badge bg-success">Activa</span>
+                            {% else %}
+                                <span class="badge bg-danger">Inactiva</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ area.fecha_creacion.strftime('%d/%m/%Y') }}</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                {% if session.rol in ['admin', 'rrhh', 'jefe_cultivo'] %}
+                                <button type="button" class="btn btn-sm btn-outline-warning">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-danger">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-map fa-3x text-muted mb-3"></i>
+            <h4 class="text-muted">No hay áreas registradas</h4>
+            <p class="text-muted">Comienza creando tu primera área de cultivo</p>
+            {% if session.rol in ['admin', 'rrhh', 'jefe_cultivo'] %}
+            <a href="{{ url_for('areas.crear_area') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Crear Primera Área
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

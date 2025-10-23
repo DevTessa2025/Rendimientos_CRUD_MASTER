@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}Crear Área - Sistema Agrícola{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h4><i class="fas fa-map"></i> Crear Nueva Área de Cultivo</h4>
+            </div>
+            <div class="card-body">
+                <!-- Tabs para seleccionar tipo de creación -->
+                <ul class="nav nav-tabs mb-4" id="crearAreaTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="individual-tab" data-bs-toggle="tab" data-bs-target="#individual" type="button" role="tab">
+                            <i class="fas fa-plus"></i> Área Individual
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="multiple-tab" data-bs-toggle="tab" data-bs-target="#multiple" type="button" role="tab">
+                            <i class="fas fa-layer-group"></i> Múltiples Áreas
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="crearAreaTabContent">
+                    <!-- Creación Individual -->
+                    <div class="tab-pane fade show active" id="individual" role="tabpanel">
+                        <form method="POST">
+                            <div class="mb-3">
+                                <label for="nombre" class="form-label">Nombre del Área *</label>
+                                <input type="text" class="form-control" id="nombre" name="nombre">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="finca_id" class="form-label">Finca *</label>
+                                <select class="form-select" id="finca_id" name="finca_id">
+                                    <option value="">Seleccionar finca...</option>
+                                    {% for finca in fincas %}
+                                    <option value="{{ finca.id }}">{{ finca.nombre }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="descripcion" class="form-label">Descripción</label>
+                                <textarea class="form-control" id="descripcion" name="descripcion" rows="3" placeholder="Información adicional sobre el área de cultivo"></textarea>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between">
+                                <a href="{{ url_for('listar_areas') }}" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left"></i> Volver
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Crear Área
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Creación Múltiple -->
+                    <div class="tab-pane fade" id="multiple" role="tabpanel">
+                        <form method="POST">
+                            <div class="mb-3">
+                                <label for="areas_multiples" class="form-label">Números de Áreas *</label>
+                                <input type="text" class="form-control" id="areas_multiples" name="areas_multiples" placeholder="Ej: 1,2,3,4,5,6">
+                                <div class="form-text">Separa los números con comas. Se crearán como "Área 1", "Área 2", etc.</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="finca_id_multiple" class="form-label">Finca *</label>
+                                <select class="form-select" id="finca_id_multiple" name="finca_id">
+                                    <option value="">Seleccionar finca...</option>
+                                    {% for finca in fincas %}
+                                    <option value="{{ finca.id }}">{{ finca.nombre }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between">
+                                <a href="{{ url_for('listar_areas') }}" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left"></i> Volver
+                                </a>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-layer-group"></i> Crear Múltiples Áreas
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

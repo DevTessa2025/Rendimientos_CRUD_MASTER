@@ -1,0 +1,259 @@
+{% extends "base.html" %}
+
+{% block title %}Asignar Área a Códigos - Sistema Agrícola{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-10 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h4><i class="fas fa-link"></i> Asignar Códigos a Área</h4>
+            </div>
+            <div class="card-body">
+                {% if codigos_sin_area|length > 0 %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>Instrucciones:</strong> 
+                    <ul class="mb-0 mt-2">
+                        <li>Haz <strong>clic</strong> en una fila para seleccionar/deseleccionar un código</li>
+                        <li>Mantén presionado y <strong>arrastra</strong> el mouse para seleccionar múltiples códigos rápidamente</li>
+                        <li>Usa los botones "Seleccionar Todos" o "Deseleccionar Todos" para selección masiva</li>
+                        <li>Tienes <strong>{{ codigos_sin_area|length }}</strong> códigos sin área asignada</li>
+                    </ul>
+                </div>
+                
+                <form method="POST" id="asignarForm">
+                    <div class="mb-4">
+                        <label for="area_id" class="form-label">Área Destino *</label>
+                        <select class="form-select" id="area_id" name="area_id" required>
+                            <option value="">Seleccionar área...</option>
+                            {% for area in areas %}
+                            <option value="{{ area.id }}">{{ area.nombre }} - {{ area.finca.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h5>Códigos Sin Asignar</h5>
+                            <div>
+                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="seleccionarTodos()">
+                                    <i class="fas fa-check-square"></i> Seleccionar Todos
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="deseleccionarTodos()">
+                                    <i class="fas fa-square"></i> Deseleccionar Todos
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                            <table class="table table-hover table-sm">
+                                <thead class="table-light sticky-top">
+                                    <tr>
+                                        <th width="50">
+                                            <input type="checkbox" id="selectAll" onchange="toggleTodos(this)">
+                                        </th>
+                                        <th>Código</th>
+                                        <th>Nombre</th>
+                                        <th>Apellido</th>
+                                        <th>Finca</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for codigo in codigos_sin_area %}
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" name="codigos[]" value="{{ codigo.id }}" class="codigo-checkbox">
+                                        </td>
+                                        <td><strong>{{ codigo.codigo }}</strong></td>
+                                        <td>{{ codigo.nombre_persona }}</td>
+                                        <td>{{ codigo.apellido_persona }}</td>
+                                        <td>{{ codigo.finca.nombre if codigo.finca else '-' }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="mt-2">
+                            <small class="text-muted">
+                                <span id="contadorSeleccionados">0</span> códigos seleccionados de {{ codigos_sin_area|length }}
+                            </small>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('codigos.listar_codigos') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Volver
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-link"></i> Asignar Códigos Seleccionados
+                        </button>
+                    </div>
+                </form>
+                
+                {% else %}
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle"></i>
+                    <strong>¡Perfecto!</strong> No hay códigos sin área asignada.
+                </div>
+                <a href="{{ url_for('codigos.listar_codigos') }}" class="btn btn-primary">
+                    <i class="fas fa-arrow-left"></i> Volver a Códigos
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Variables para drag-to-select
+let isDragging = false;
+let startCheckboxState = false;
+
+// Función para seleccionar/deseleccionar todos los checkboxes
+function toggleTodos(checkbox) {
+    const checkboxes = document.querySelectorAll('.codigo-checkbox');
+    checkboxes.forEach(cb => cb.checked = checkbox.checked);
+    actualizarContador();
+}
+
+function seleccionarTodos() {
+    document.getElementById('selectAll').checked = true;
+    toggleTodos(document.getElementById('selectAll'));
+}
+
+function deseleccionarTodos() {
+    document.getElementById('selectAll').checked = false;
+    toggleTodos(document.getElementById('selectAll'));
+}
+
+// Actualizar el contador de seleccionados
+function actualizarContador() {
+    const checkboxes = document.querySelectorAll('.codigo-checkbox:checked');
+    document.getElementById('contadorSeleccionados').textContent = checkboxes.length;
+}
+
+// Funciones para drag-to-select
+function handleMouseDown(e, checkbox) {
+    isDragging = true;
+    startCheckboxState = !checkbox.checked;
+    checkbox.checked = startCheckboxState;
+    actualizarContador();
+    e.preventDefault(); // Prevenir selección de texto
+}
+
+function handleMouseEnter(checkbox) {
+    if (isDragging) {
+        checkbox.checked = startCheckboxState;
+        actualizarContador();
+    }
+}
+
+function handleMouseUp() {
+    isDragging = false;
+}
+
+// Agregar listeners a todos los checkboxes
+document.addEventListener('DOMContentLoaded', function() {
+    const checkboxes = document.querySelectorAll('.codigo-checkbox');
+    const rows = document.querySelectorAll('tbody tr');
+    
+    // Agregar listener de cambio para actualizar contador
+    checkboxes.forEach(cb => {
+        cb.addEventListener('change', actualizarContador);
+    });
+    
+    // Agregar listeners para drag-to-select en cada fila
+    rows.forEach(row => {
+        const checkbox = row.querySelector('.codigo-checkbox');
+        
+        // Mouse down en el checkbox o en la fila
+        row.addEventListener('mousedown', function(e) {
+            // Solo si el click es en la fila o en el checkbox
+            if (e.target.tagName !== 'TD' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'STRONG') return;
+            handleMouseDown(e, checkbox);
+        });
+        
+        // Mouse enter en la fila
+        row.addEventListener('mouseenter', function() {
+            handleMouseEnter(checkbox);
+        });
+        
+        // Prevenir comportamiento de arrastre por defecto
+        row.addEventListener('dragstart', function(e) {
+            e.preventDefault();
+        });
+    });
+    
+    // Detener el arrastre cuando se suelta el mouse en cualquier parte
+    document.addEventListener('mouseup', handleMouseUp);
+    
+    // También detener si el mouse sale de la ventana
+    document.addEventListener('mouseleave', handleMouseUp);
+    
+    // Validar formulario antes de enviar
+    document.getElementById('asignarForm').addEventListener('submit', function(e) {
+        const checkboxes = document.querySelectorAll('.codigo-checkbox:checked');
+        if (checkboxes.length === 0) {
+            e.preventDefault();
+            alert('Debes seleccionar al menos un código para asignar.');
+            return false;
+        }
+        return true;
+    });
+});
+</script>
+
+<style>
+.sticky-top {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.table-hover tbody tr {
+    cursor: pointer;
+    user-select: none; /* Prevenir selección de texto durante el arrastre */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.table-hover tbody tr:active {
+    background-color: #e9ecef;
+}
+
+.codigo-checkbox {
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+    pointer-events: none; /* Los clicks en el checkbox serán manejados por la fila */
+}
+
+#selectAll {
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+}
+
+/* Indicador visual durante el arrastre */
+.table-hover tbody tr.dragging {
+    background-color: #d1ecf1;
+    border-left: 3px solid #0dcaf0;
+}
+
+/* Animación suave para los checkboxes */
+.codigo-checkbox {
+    transition: transform 0.1s ease;
+}
+
+.codigo-checkbox:checked {
+    transform: scale(1.1);
+}
+</style>
+{% endblock %}

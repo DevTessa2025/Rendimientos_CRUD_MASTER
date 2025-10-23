@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% block title %}Gestionar Asignaciones de Supervisores{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-user-tie"></i> Gestionar Asignaciones de Supervisores</h2>
+        <div>
+            <a href="{{ url_for('supervisores.asignar_supervisor_area') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Nueva Asignación
+            </a>
+            <a href="{{ url_for('supervisores.listar_supervisores') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+        </div>
+    </div>
+
+    <!-- Supervisores Asignados por Área -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-map-marked-alt"></i> Supervisores Asignados por Área</h5>
+                </div>
+                <div class="card-body">
+                    {% if supervisores_por_area %}
+                        <div class="row">
+                            {% for area_id, data in supervisores_por_area.items() %}
+                            <div class="col-md-6 col-lg-4 mb-3">
+                                <div class="card border-{% if data.supervisor %}success{% else %}warning{% endif %}">
+                                    <div class="card-header bg-{% if data.supervisor %}success{% else %}warning{% endif %} text-white">
+                                        <h6 class="mb-0">
+                                            <i class="fas fa-map-marker-alt"></i> {{ data.area.nombre }}
+                                        </h6>
+                                        <small>{{ data.area.finca.nombre }}</small>
+                                    </div>
+                                    <div class="card-body">
+                                        {% if data.supervisor %}
+                                            <div class="d-flex align-items-center">
+                                                <div class="flex-grow-1">
+                                                    <strong>{{ data.supervisor.nombre }} {{ data.supervisor.apellido }}</strong>
+                                                    <br>
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-key"></i> {{ data.supervisor.clave_acceso }}
+                                                    </small>
+                                                </div>
+                                                <div>
+                                                    <span class="badge bg-success">
+                                                        <i class="fas fa-check"></i> Asignado
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        {% else %}
+                                            <div class="text-center text-muted">
+                                                <i class="fas fa-user-slash fa-2x mb-2"></i>
+                                                <p class="mb-0">Sin supervisor asignado</p>
+                                                <small>Haz clic en "Nueva Asignación" para asignar uno</small>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center text-muted py-4">
+                            <i class="fas fa-map-marked-alt fa-3x mb-3"></i>
+                            <h5>No hay áreas disponibles</h5>
+                            <p>Primero debes crear áreas para poder asignar supervisores.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Supervisores Sin Área -->
+    {% if supervisores_sin_area %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-warning">
+                    <h5 class="mb-0">
+                        <i class="fas fa-exclamation-triangle"></i> 
+                        Supervisores Sin Área Asignada ({{ supervisores_sin_area|length }})
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for supervisor in supervisores_sin_area %}
+                        <div class="col-md-6 col-lg-4 mb-3">
+                            <div class="card border-warning">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-grow-1">
+                                            <strong>{{ supervisor.nombre }} {{ supervisor.apellido }}</strong>
+                                            <br>
+                                            <small class="text-muted">
+                                                <i class="fas fa-key"></i> {{ supervisor.clave_acceso }}
+                                            </small>
+                                        </div>
+                                        <div>
+                                            <span class="badge bg-warning text-dark">
+                                                <i class="fas fa-exclamation"></i> Sin área
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="text-center mt-3">
+                        <a href="{{ url_for('supervisores.asignar_supervisor_area') }}" class="btn btn-warning">
+                            <i class="fas fa-link"></i> Asignar Supervisores a Áreas
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Resumen -->
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center">
+                    <h3>{{ supervisores_por_area|length }}</h3>
+                    <p class="mb-0">Áreas Totales</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-success text-white">
+                <div class="card-body text-center">
+                    <h3>{{ supervisores_por_area.values() | selectattr('supervisor') | list | length }}</h3>
+                    <p class="mb-0">Áreas con Supervisor</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-warning text-white">
+                <div class="card-body text-center">
+                    <h3>{{ supervisores_sin_area|length }}</h3>
+                    <p class="mb-0">Supervisores Sin Área</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

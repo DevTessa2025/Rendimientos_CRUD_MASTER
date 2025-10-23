@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}Crear Código - Sistema Agrícola{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h4><i class="fas fa-users"></i> Crear Nuevo Código de Cosecha</h4>
+            </div>
+            <div class="card-body">
+                <!-- Tabs para seleccionar tipo de creación -->
+                <ul class="nav nav-tabs mb-4" id="crearCodigoTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="individual-codigo-tab" data-bs-toggle="tab" data-bs-target="#individual-codigo" type="button" role="tab">
+                            <i class="fas fa-plus"></i> Código Individual
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="rango-codigo-tab" data-bs-toggle="tab" data-bs-target="#rango-codigo" type="button" role="tab">
+                            <i class="fas fa-list-ol"></i> Rango de Códigos
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="crearCodigoTabContent">
+                    <!-- Creación Individual -->
+                    <div class="tab-pane fade show active" id="individual-codigo" role="tabpanel">
+                        <form method="POST">
+                            <div class="mb-3">
+                                <label for="codigo" class="form-label">Código *</label>
+                                <input type="text" class="form-control" id="codigo" name="codigo">
+                                <div class="form-text">Código único que identificará a esta persona en el sistema</div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="nombre_persona" class="form-label">Nombre *</label>
+                                        <input type="text" class="form-control" id="nombre_persona" name="nombre_persona">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="apellido_persona" class="form-label">Apellido *</label>
+                                        <input type="text" class="form-control" id="apellido_persona" name="apellido_persona">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="telefono" class="form-label">Teléfono</label>
+                                <input type="tel" class="form-control" id="telefono" name="telefono">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="area_id" class="form-label">Área de Cultivo (Opcional)</label>
+                                <select class="form-select" id="area_id" name="area_id">
+                                    <option value="">Sin asignar (se asignará después)</option>
+                                    {% for area in areas %}
+                                    <option value="{{ area.id }}">{{ area.nombre }} - {{ area.finca.nombre }}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="form-text">Puedes dejar sin asignar y asignar el área posteriormente desde "Gestionar Asignaciones"</div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between">
+                                <a href="{{ url_for('listar_codigos') }}" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left"></i> Volver
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Crear Código
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Creación en Rango -->
+                    <div class="tab-pane fade" id="rango-codigo" role="tabpanel">
+                        <form method="POST">
+                            <div class="mb-3">
+                                <label for="rango_codigos" class="form-label">Rango de Códigos *</label>
+                                <input type="text" class="form-control" id="rango_codigos" name="rango_codigos" placeholder="Ej: 001-010">
+                                <div class="form-text">Formato: inicio-fin (ej: 001-010 creará códigos 001, 002, 003... hasta 010)</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="area_id_rango" class="form-label">Área de Cultivo (Opcional)</label>
+                                <select class="form-select" id="area_id_rango" name="area_id">
+                                    <option value="">Sin asignar (se asignará después)</option>
+                                    {% for area in areas %}
+                                    <option value="{{ area.id }}">{{ area.nombre }} - {{ area.finca.nombre }}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="form-text">Puedes dejar sin asignar y asignar cada código a su área posteriormente desde "Gestionar Asignaciones"</div>
+                            </div>
+                            
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle"></i>
+                                <strong>Nota:</strong> Los códigos se crearán automáticamente con nombres genéricos (Persona 001, Persona 002, etc.). 
+                                Podrás editar los nombres y asignar cada código a su área correspondiente individualmente después.
+                            </div>
+                            
+                            <div class="d-flex justify-content-between">
+                                <a href="{{ url_for('listar_codigos') }}" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left"></i> Volver
+                                </a>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-list-ol"></i> Crear Rango de Códigos
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

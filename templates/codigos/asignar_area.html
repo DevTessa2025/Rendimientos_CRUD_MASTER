@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Asignar Área a Códigos - Sistema Agrícola{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h4><i class="fas fa-link"></i> Asignar Área a Códigos Sin Área</h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>Problema detectado:</strong> Se encontraron {{ codigos_sin_area }} códigos que no tienen área asignada.
+                    Esto puede causar que no se muestren en la lista.
+                </div>
+                
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="area_id" class="form-label">Seleccionar Área *</label>
+                        <select class="form-select" id="area_id" name="area_id" required>
+                            <option value="">Seleccionar área...</option>
+                            {% for area in areas %}
+                            <option value="{{ area.id }}">{{ area.nombre }} - {{ area.finca.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="form-text">
+                            Todos los códigos sin área serán asignados a esta área seleccionada.
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Nota:</strong> Esta acción asignará TODOS los códigos sin área a la misma área.
+                        Si necesitas distribuir los códigos en diferentes áreas, deberás hacerlo manualmente después.
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('listar_codigos') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Volver
+                        </a>
+                        <button type="submit" class="btn btn-warning">
+                            <i class="fas fa-link"></i> Asignar Área a {{ codigos_sin_area }} Códigos
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

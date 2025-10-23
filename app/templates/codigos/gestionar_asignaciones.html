@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}Gestionar Asignaciones de Códigos - Sistema Agrícola{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-tasks"></i> Gestionar Asignaciones de Códigos</h1>
+    <a href="{{ url_for('codigos.listar_codigos') }}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Volver a Códigos
+    </a>
+</div>
+
+<!-- Códigos sin área -->
+{% if codigos_sin_area %}
+<div class="card mb-4">
+    <div class="card-header bg-warning text-dark">
+        <h5><i class="fas fa-exclamation-triangle"></i> Códigos Sin Área Asignada ({{ codigos_sin_area|length }})</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            {% for codigo in codigos_sin_area %}
+            <div class="col-md-3 mb-2">
+                <span class="badge bg-warning text-dark">{{ codigo.codigo }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="mt-3">
+            <a href="{{ url_for('codigos.asignar_area_codigos') }}" class="btn btn-warning">
+                <i class="fas fa-link"></i> Asignar Todos a un Área
+            </a>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Códigos por área -->
+<div class="row">
+    {% for area_id, data in codigos_por_area.items() %}
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-map"></i> {{ data.area.nombre }}</h5>
+                <small class="text-muted">{{ data.area.finca.nombre }}</small>
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="badge bg-primary">{{ data.total }} códigos</span>
+                    <div class="btn-group btn-group-sm">
+                        <button class="btn btn-outline-primary" onclick="verCodigos({{ area_id }})">
+                            <i class="fas fa-eye"></i> Ver
+                        </button>
+                        <button class="btn btn-outline-warning" onclick="moverCodigos({{ area_id }})">
+                            <i class="fas fa-exchange-alt"></i> Mover
+                        </button>
+                    </div>
+                </div>
+                
+                {% if data.codigos %}
+                <div class="row" id="codigos-{{ area_id }}" style="display: none;">
+                    {% for codigo in data.codigos[:10] %}
+                    <div class="col-md-4 mb-1">
+                        <span class="badge bg-secondary">{{ codigo.codigo }}</span>
+                    </div>
+                    {% endfor %}
+                    {% if data.codigos|length > 10 %}
+                    <div class="col-12">
+                        <small class="text-muted">... y {{ data.codigos|length - 10 }} más</small>
+                    </div>
+                    {% endif %}
+                </div>
+                {% else %}
+                <div class="text-center text-muted">
+                    <i class="fas fa-inbox fa-2x mb-2"></i>
+                    <p>No hay códigos asignados a esta área</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Resumen -->
+<div class="card mt-4">
+    <div class="card-header">
+        <h5><i class="fas fa-chart-bar"></i> Resumen de Asignaciones</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="text-center">
+                    <h3 class="text-primary">{{ codigos_sin_area|length }}</h3>
+                    <p class="text-muted">Sin Asignar</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="text-center">
+                    <h3 class="text-success">{{ codigos_por_area.values() | sum(attribute='total') }}</h3>
+                    <p class="text-muted">Asignados</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="text-center">
+                    <h3 class="text-info">{{ codigos_por_area|length }}</h3>
+                    <p class="text-muted">Áreas con Códigos</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="text-center">
+                    <h3 class="text-warning">{{ (codigos_sin_area|length + codigos_por_area.values() | sum(attribute='total')) }}</h3>
+                    <p class="text-muted">Total Códigos</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function verCodigos(areaId) {
+    const element = document.getElementById('codigos-' + areaId);
+    if (element.style.display === 'none') {
+        element.style.display = 'block';
+    } else {
+        element.style.display = 'none';
+    }
+}
+
+function moverCodigos(areaId) {
+    alert('Función de mover códigos en desarrollo');
+}
+</script>
+{% endblock %}
